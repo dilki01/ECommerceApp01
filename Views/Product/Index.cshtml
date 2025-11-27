@@ -7,6 +7,7 @@
     <thead>
         <tr>
             <th>Name</th>
+            <th>Category</th>
             <th>Description</th>
             <th>Price</th>
             <th>Stock</th>
@@ -18,6 +19,7 @@
         {
             <tr>
                 <td>@p.Name</td>
+                <td>@p.Category?.Name</td>
                 <td>@p.Description</td>
                 <td>@p.Price</td>
                 <td>@p.Stock</td>
