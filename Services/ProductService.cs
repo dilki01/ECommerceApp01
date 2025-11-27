@@ -1,6 +1,8 @@
 using ECommerceApp.Data;
 using ECommerceApp.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace ECommerceApp.Services;
 
@@ -12,9 +14,17 @@ public class ProductService
         _db = db;
     }
 
-    public async Task<List<Product>> GetAllAsync() => await _db.Products.ToListAsync();
+    // include Category. so Product.Index can show category name
+    public async Task<List<Product>> GetAllAsync() =>
+        await _db.Products.Include(p => p.Category).ToListAsync();
 
-    public async Task<Product?> GetByIdAsync(int id) => await _db.Products.FindAsync(id);
+    // public async Task<List<Product>> GetAllAsync() => await _db.Products.ToListAsync();
+
+    // public async Task<Product?> GetByIdAsync(int id) => await _db.Products.FindAsync(id);
+
+    public async Task<Product?> GetByIdAsync(int id) =>
+        await _db.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
+
 
     public async Task AddAsync(Product product)
     {

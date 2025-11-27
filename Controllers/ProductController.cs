@@ -1,16 +1,20 @@
 using ECommerceApp.Models;
 using ECommerceApp.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace ECommerceApp.Controllers
 {
     public class ProductController : Controller
     {
         private readonly ProductService _service;
+        private readonly CategoryService _categoryService;
 
-        public ProductController(ProductService service)
+        public ProductController(ProductService service, CategoryService categoryService)
         {
             _service = service;
+            _categoryService = categoryService;
         }
 
         // READ: List all products
@@ -21,8 +25,11 @@ namespace ECommerceApp.Controllers
         }
 
         // CREATE: show form
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var cats = await _categoryService.GetAllAsync();
+            ViewBag.Categories = new SelectList(cats, "Id", "Name");
+
             return View();
         }
 
@@ -32,7 +39,11 @@ namespace ECommerceApp.Controllers
         public async Task<IActionResult> Create(Product product)
         {
             if (!ModelState.IsValid)
+            {
+                var cats = await _categoryService.GetAllAsync();
+                ViewBag.Categories = new SelectList(cats, "Id", "Name", product.CategoryId);
                 return View(product);
+            }
 
             await _service.AddAsync(product);
             return RedirectToAction(nameof(Index));
@@ -45,6 +56,8 @@ namespace ECommerceApp.Controllers
             if (product == null)
                 return NotFound();
 
+            var cats = await _categoryService.GetAllAsync();
+            ViewBag.Categories = new SelectList(cats, "Id", "Name", product.CategoryId);
             return View(product);
         }
 
@@ -54,7 +67,11 @@ namespace ECommerceApp.Controllers
         public async Task<IActionResult> Edit(Product product)
         {
             if (!ModelState.IsValid)
+            {
+                var cats = await _categoryService.GetAllAsync();
+                ViewBag.Categories = new SelectList(cats, "Id", "Name", product.CategoryId);
                 return View(product);
+            }
 
             await _service.UpdateAsync(product);
             return RedirectToAction(nameof(Index));

@@ -7,4 +7,10 @@ public class Product
     public string Description { get; set; } = null!;
     public decimal Price { get; set; }
     public int Stock { get; set; }
+
+    //foreign key to Category
+    public int CategoryId { get; set; }
+
+    //Navigation property
+    public Category? Category { get; set; } = null!;
 }
